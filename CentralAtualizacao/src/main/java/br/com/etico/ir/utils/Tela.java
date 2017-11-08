@@ -58,6 +58,8 @@ public class Tela extends JFrame {
 			}
 		});
 	}
+	
+	Postagem postagem = null;
 
 	/**
 	 * Create the frame.
@@ -170,18 +172,20 @@ public class Tela extends JFrame {
 				Session session = JPAUtil.getSession();
 				session.getTransaction().begin();
 
-				Postagem postagem = null;
+				Postagem post = null;
 
 				if (artigo.trim().length() > 0) {
 
 					// System.out.println(artigo);
 
-					postagem = new Postagem();
-					postagem.setIndexado(false);
-					postagem.setTituloPostagem(artigo);
-					postagem.setCategoria("DESCONHECIDA");
+					post = new Postagem();
+					post.setIndexado(false);
+					post.setTituloPostagem(artigo);
+					post.setCategoria("DESCONHECIDA");
 
-					session.persist(postagem);
+					session.persist(post);
+					
+					postagem = post;
 
 					System.out.println("DOWNLOAD EFETUADO");
 
