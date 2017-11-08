@@ -1,0 +1,148 @@
+package br.com.etico.ir.indexador;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import br.com.etico.ir.beans.PostagemTermos;
+import br.com.etico.ir.beans.Termos;
+import br.com.etico.ir.tokenizacao.Tokenizacao;
+import br.com.etico.ir.utils.Termo;
+import br.com.etico.modelo.beans.Postagem;
+import br.com.etico.persistencia.jpa.JPAUtil;
+
+public class Indexador {
+
+	public static void main(String[] args) {
+
+		Session session = null;
+
+		Tokenizacao tokenizador = new Tokenizacao();
+		
+		try {
+			session = JPAUtil.getSession();
+			
+			//busca no banco todas as postagens não indexadas
+			@SuppressWarnings("unchecked")
+			List<Postagem> postagens = session.createCriteria(Postagem.class)
+					.add(Restrictions.eq(Postagem.strIndexado, false)).list();
+
+			System.out.println(postagens.size());
+			
+			if (postagens == null) {
+				return;
+			}
+			
+			//inicia o processo de index
+			for (Postagem postagem : postagens) {
+				
+				session.beginTransaction();
+				
+				List<Termo> termos = tokenizador.tokenizadorTermo(new StringBuilder(postagem.getTituloPostagem()));
+				
+				// percorre todos os termos de um texto
+				for (Termo termo : termos) {
+					
+					Termos objTerm = (Termos) session.createCriteria(Termos.class)
+							.add(Restrictions.eq(Termos.strTermo, termo.getTermo()))
+							.uniqueResult();
+					
+					// verifica se o termo ja existe na tabela de termos
+					if (objTerm != null) {
+						
+						objTerm.setQtdTermoDocumentos(objTerm.getQtdTermoDocumentos()+termo.getQtdTermo());
+						session.update(objTerm);
+						
+						//vincula o termo as postagem
+						PostagemTermos postagemTermos = new PostagemTermos();
+						postagemTermos.setPostagem(postagem);
+						postagemTermos.setTermos(objTerm);
+						postagemTermos.setQtdTermos(termo.getQtdTermo());
+						postagemTermos.setFrequenciaDoTermoTF(termo.getFrequenciaDoTermoTF());
+						session.save(postagemTermos);
+						
+						continue;
+					}
+
+					// se não existir cadastra o termo.
+					objTerm = new Termos();
+					objTerm.setTermo(termo.getTermo());
+					objTerm.setQtdTermoDocumentos(termo.getQtdTermo());
+					session.save(objTerm);
+					
+					//vincula o termo as postagem
+					PostagemTermos postagemTermos = new PostagemTermos();
+					postagemTermos.setPostagem(postagem);
+					postagemTermos.setTermos(objTerm);
+					postagemTermos.setQtdTermos(termo.getQtdTermo());
+					postagemTermos.setFrequenciaDoTermoTF(termo.getFrequenciaDoTermoTF());
+					session.save(postagemTermos);
+					
+				}
+				
+				//confirma que foi indexado
+				postagem.setIndexado(true);
+				
+//				session.beginTransaction();
+				session.update(postagem);
+				
+				
+				/**
+				 * Executa todo processo. Nenhum erro? Então persiste na base de dados
+				 */
+				session.getTransaction().commit();
+				
+			}
+			
+			/****
+			 * 
+			 * Atualiza o IDF / TF-IDF (peso do termo)
+			 * 
+			 *****/
+			
+			session = JPAUtil.getSession();
+			//
+			double qtdDocumentos = (long) session.createCriteria(Postagem.class)
+					.setProjection(Projections.rowCount()).uniqueResult();
+
+			List<Termos> termos = session.createCriteria(Termos.class).list();
+
+			session.beginTransaction();
+			
+			for (Termos termo : termos) {
+
+				List<PostagemTermos> postagemTermos = session
+						.createCriteria(PostagemTermos.class)
+						.add(Restrictions.eq(PostagemTermos.strTermos, termo))
+						.list();
+
+				for (PostagemTermos postagemTermo : postagemTermos) {
+					postagemTermo.setFrequenciaDoIndiceReversoTermoIDF(Math.log(qtdDocumentos / postagemTermos.size()));
+					postagemTermo.setTfIDF(postagemTermo.getFrequenciaDoTermoTF() * postagemTermo.getFrequenciaDoIndiceReversoTermoIDF());
+					session.update(postagemTermo);
+				}
+
+			}
+			
+			session.getTransaction().commit();
+
+			session.flush();
+			session.clear();
+			
+
+		} catch (Exception e) {
+
+			session.getTransaction().rollback();
+
+			e.printStackTrace();
+		} finally {
+
+			if (session != null) {
+				session.close();
+			}
+		}
+		
+	}
+}

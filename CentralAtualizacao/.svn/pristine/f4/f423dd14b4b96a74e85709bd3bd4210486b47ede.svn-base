@@ -1,0 +1,162 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>br.com.etico</groupId>
+	<artifactId>CentralAtualizacao</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+	<!-- CODIFICAÇÃO DO PROJETO -->
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- CONFIGURAÇÃO DA VERSÃO DO JAVA -->
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<!-- JSF, PRIMEFACES, BOOTSTRAP -->
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+			<version>2.2.11</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>5.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>1.0.10</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<!-- CDI -->
+
+		<dependency>
+			<groupId>org.jboss.weld.servlet</groupId>
+			<artifactId>weld-servlet</artifactId>
+			<version>2.2.1.Final</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>2.2.1.Final</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.12</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<!-- DEPENCENDIAS JPA -->
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4-1201-jdbc41</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.8.Final</version>
+		</dependency>
+
+		<!-- for JPA, use hibernate-entitymanager instead of hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.3.8.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>4.3.8.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+		<!-- teste unitários -->
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+
+	</dependencies>
+
+</project>
+

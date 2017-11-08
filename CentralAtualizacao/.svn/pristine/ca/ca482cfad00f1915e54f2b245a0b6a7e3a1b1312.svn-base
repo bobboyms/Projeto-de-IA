@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+
+	<title>SB Admin 2 - Bootstrap Admin Theme</title>
+
+	<link type="text/css" rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/resources/css/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+
+	<link type="text/css" rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/resources/css/bower_components/metisMenu/dist/metisMenu.min.css" />
+
+	<link type="text/css" rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/resources/css/dist/css/sb-admin-2.css" />
+
+	<link type="text/css" rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/resources/css/bower_components/font-awesome/css/font-awesome.min.css" />
+
+	<link type="text/css" rel="stylesheet"
+		href="#{facesContext.externalContext.requestContextPath}/resources/css/arquivo.css" />
+
+</h:head>
+<body>
+
+	<h:form>
+
+		<div id="wrapper">
+
+			<ui:include src="navbar.xhtml" />
+
+			<ui:include src="menu.xhtml" />
+
+		</div>
+
+	</h:form>
+
+
+
+
+
+	<!-- jQuery -->
+	<script
+		src="#{facesContext.externalContext.requestContextPath}/resources/css/bower_components/jquery/dist/jquery.min.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script
+		src="#{facesContext.externalContext.requestContextPath}/resources/css/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<!-- Metis Menu Plugin JavaScript -->
+	<script
+		src="#{facesContext.externalContext.requestContextPath}/resources/css/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+	<!-- Custom Theme JavaScript -->
+	<script
+		src="#{facesContext.externalContext.requestContextPath}/resources/css/dist/js/sb-admin-2.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,496 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<ui:define name="content">
+
+		<div class="ui-grid ui-grid-responsive">
+			<div class="ui-grid-row" style="background-color: #149bdf;">
+
+				<h1 class="aw-page-title" style="margin-left: 30px;">Usuarios</h1>
+
+			</div>
+		</div>
+
+		<p:ajaxStatus onstart="PF('statusDialog').show();"
+			onsuccess="PF('statusDialog').hide();" />
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false">
+			<p:graphicImage value="/design/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<h:form id="frmPrincipal">
+
+			<div class="ui-fluid">
+
+				<p:growl id="messages" showDetail="true" />
+
+				<p:toolbar id="toolbar" styleClass="ui-widget-toolbar ">
+					<p:toolbarGroup align="left">
+
+						<p:commandButton type="push" value="Novo" image="ui-icon-document"
+							actionListener="#{usuarioForm.iniciarCadastrar}"
+							rendered="#{usuarioForm.permiteNovo}" update=":frmPrincipal" />
+
+						<p:commandButton type="push" value="Salvar" image="ui-icon-disk"
+							actionListener="#{usuarioForm.iniciarInserir}"
+							rendered="#{usuarioForm.estadoCadastrando || usuarioForm.estadoEditando}"
+							update=":frmPrincipal ,:frmmodalPesquisa" />
+
+						<p:commandButton type="push" value="Cancelar"
+							actionListener="#{usuarioForm.cancelar}"
+							image="ui-icon-circle-close"
+							rendered="#{usuarioForm.estadoCadastrando || usuarioForm.estadoEditando}"
+							update=":frmPrincipal" />
+
+						<p:commandButton type="push" value="Editar" image="ui-icon-pencil"
+							actionListener="#{usuarioForm.iniciarEditar}"
+							rendered="#{usuarioForm.permiteEditar}" update=":frmPrincipal" />
+
+						<p:commandButton type="push" value="Exluir"
+							onclick="PF('confirmExcluir').show()"
+							rendered="#{usuarioForm.permiteExcluir}" image="ui-icon-trash"
+							update=":frmPrincipal" />
+
+						<p:commandButton type="push" value="Buscar" image="ui-icon-search"
+							oncomplete="PF('modalPesquisa').show()"
+							update=":frmmodalPesquisa"
+							rendered="#{usuarioForm.permiteBuscar}" />
+
+						<p:commandButton type="push" value="Atualizar"
+							image="ui-icon-arrowrefresh-1-s"
+							actionListener="#{usuarioForm.iniciarAtualizar}"
+							rendered="#{usuarioForm.estadoSelecionado and !usuarioForm.estadoEditando}"
+							update=":frmPrincipal" />
+
+						<p:commandButton type="push" value="Voltar"
+							icon="ui-icon-arrowreturnthick-1-w"
+							oncomplete="window.location.href = 'chamados.jsf'" />
+
+					</p:toolbarGroup>
+				</p:toolbar>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-2">
+							<div class="ui-bloco-campo">
+								<h:outputLabel value="Código" />
+								<h:inputText value="#{usuarioForm.entidade.id}" disabled="true"
+									styleClass="ui-input-100" />
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-4">
+							<div class="ui-bloco-campo">
+								<h:outputLabel value="Nome completo" />
+								<p:inputText value="#{usuarioForm.entidade.nomeUsuario}"
+									id="inputTituloChamado"
+									disabled="#{usuarioForm.campoBloqueado}"
+									styleClass="ui-input-100">
+									<f:ajax execute="@this" event="blur" />
+								</p:inputText>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-4">
+							<div class="ui-bloco-campo">
+								<h:outputLabel value="Login do usuario" />
+								<p:inputText value="#{usuarioForm.entidade.login}"
+									disabled="#{usuarioForm.campoBloqueado}"
+									styleClass="ui-input-100">
+									<f:ajax execute="@this" event="blur" />
+								</p:inputText>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-4">
+							<div class="ui-bloco-campo">
+								<h:outputLabel value="Senha" />
+								<p:password value="#{usuarioForm.entidade.senha}"
+									disabled="#{usuarioForm.campoBloqueado}"
+									styleClass="ui-input-100">
+									<f:ajax execute="@this" event="blur" />
+								</p:password>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-4">
+							<div class="ui-bloco-campo">
+								<h:outputLabel value="Email" />
+								<p:inputText value="#{usuarioForm.entidade.email}"
+									disabled="#{usuarioForm.campoBloqueado}"
+									styleClass="ui-input-100">
+									<f:ajax execute="@this" event="blur" />
+								</p:inputText>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<p:fieldset legend="Empresa do usuario" id="pnlovEmpresa"
+							class="ui-grid-col-12"
+							style="padding-bottom: 5px; margin-top: 10px;">
+							<div class="ui-grid-col-2" style="">
+								<h:outputLabel value="Código" styleClass="ui-widget-label" />
+								<h:inputText id="inputID" style="width: 100%"
+									disabled="#{usuarioForm.campoBloqueado or usuarioForm.estadoEditando}"
+									value="#{usuarioForm.lovEmpresa.idSelecionado}">
+									<f:ajax event="keyup" render="pnlovEmpresa" execute="@this"
+										listener="#{usuarioForm.lovEmpresa.onChange}" />
+								</h:inputText>
+							</div>
+							<div class="ui-grid-col-4" style="">
+								<h:outputLabel value="Empresa selecionada"
+									styleClass="ui-widget-label" />
+								<h:inputText id="inputUsuario" style="width: 100%"
+									value="#{usuarioForm.entidade.empresa.nomeEmpresa}"
+									disabled="true" size="51" maxlength="120" />
+							</div>
+							<div class="ui-grid-col-2" style="margin-top: 14px;">
+
+								<p:commandButton type="push" image="ui-icon-search"
+									style="margin-left: 8px !important;"
+									disabled="#{usuarioForm.campoBloqueado or usuarioForm.estadoEditando}"
+									oncomplete="PF('lovEmpresa').show()" update="frmmlovEmpresa"
+									rendered="true" />
+
+								<p:commandButton type="push" image="ui-icon-minusthick"
+									style="margin-left: 2px !important;"
+									disabled="#{usuarioForm.campoBloqueado or usuarioForm.estadoEditando}"
+									actionListener="#{usuarioForm.lovEmpresa.remover}"
+									update=":frmPrincipal:pnlovEmpresa" />
+
+							</div>
+						</p:fieldset>
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<p:fieldset legend="Perfil do usuario" id="pnlovPerfil"
+							class="ui-grid-col-12"
+							style="padding-bottom: 5px; margin-top: 10px;">
+							<div class="ui-grid-col-2" style="">
+								<h:outputLabel value="Código" styleClass="ui-widget-label" />
+								<h:inputText id="inputID2" style="width: 100%"
+									disabled="#{usuarioForm.campoBloqueado or usuarioForm.estadoEditando}"
+									value="#{usuarioForm.lovPerfil.idSelecionado}">
+									<f:ajax event="keyup" render="pnlovPerfil" execute="@this"
+										listener="#{usuarioForm.lovPerfil.onChange}" />
+								</h:inputText>
+							</div>
+							<div class="ui-grid-col-4" style="">
+								<h:outputLabel value="Perfil selecionado"
+									styleClass="ui-widget-label" />
+								<h:inputText id="inputCliente" style="width: 100%"
+									value="#{usuarioForm.entidade.perfil.nome}" disabled="true"
+									size="51" maxlength="120" />
+							</div>
+							<div class="ui-grid-col-2" style="margin-top: 14px;">
+
+								<p:commandButton type="push" image="ui-icon-search"
+									style="margin-left: 8px !important;"
+									disabled="#{usuarioForm.campoBloqueado or usuarioForm.estadoEditando}"
+									oncomplete="PF('lovPerfil').show()" update="frmmlovPerfil"
+									rendered="true" />
+
+								<p:commandButton type="push" image="ui-icon-minusthick"
+									style="margin-left: 2px !important;"
+									disabled="#{usuarioForm.campoBloqueado or usuarioForm.estadoEditando}"
+									actionListener="#{usuarioForm.lovPerfil.remover}"
+									update=":frmPrincipal:pnlovPerfil" />
+
+							</div>
+						</p:fieldset>
+					</div>
+				</div>
+
+				<h:panelGrid columns="4" style="margin-bottom:10px" cellpadding="5" rendered="#{!usuarioForm.perfilCliente}">
+					<h:outputText value="Permite cadastrar empresa " />
+					<p:selectBooleanCheckbox value="#{usuarioForm.entidade.permiteEmpresa}" disabled="#{usuarioForm.campoBloqueado}" />
+					
+					<h:outputText value="Permite cadastrar usuario " />
+					<p:selectBooleanCheckbox value="#{usuarioForm.entidade.permiteUsuario}" disabled="#{usuarioForm.campoBloqueado}" />
+				</h:panelGrid>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<p:fieldset legend="Empresas permitidas" id="pnListaLovEmpresa"
+							rendered="#{!usuarioForm.perfilCliente}" class="ui-grid-col-12"
+							style="padding-bottom: 5px; margin-top: 10px;">
+							<div class="ui-grid-col-2" style="">
+								<h:outputLabel value="Código" styleClass="ui-widget-label" />
+								<h:inputText style="width: 100%"
+									disabled="#{usuarioForm.campoBloqueado}"
+									value="#{usuarioForm.listaLovEmpresa.idSelecionado}">
+									<f:ajax event="keyup" render="pnListaLovEmpresa"
+										execute="@this"
+										listener="#{usuarioForm.listaLovEmpresa.onChange}" />
+								</h:inputText>
+							</div>
+							<div class="ui-grid-col-4" style="">
+								<h:outputLabel value="Perfil selecionado"
+									styleClass="ui-widget-label" />
+								<h:inputText style="width: 100%"
+									value="#{usuarioForm.listaLovEmpresa.entidade.nomeEmpresa}"
+									disabled="true" size="51" maxlength="120" />
+							</div>
+							<div class="ui-grid-col-2" style="margin-top: 14px;">
+
+								<p:commandButton type="push" image="ui-icon-search"
+									style="margin-left: 8px !important;"
+									disabled="#{usuarioForm.campoBloqueado}"
+									oncomplete="PF('listaLovEmpresa').show()"
+									update="frmmlistaLovEmpresa" rendered="true" />
+
+								<p:commandButton type="push" image="ui-icon-plusthick"
+									style="margin-left: 2px !important;"
+									disabled="#{usuarioForm.campoBloqueado}"
+									actionListener="#{usuarioForm.listaLovEmpresa.adicionarNaLista}"
+									update=":frmPrincipal:pnListaLovEmpresa" />
+
+							</div>
+							<div class="ui-grid-row">
+
+								<p:dataTable var="grupo" reflow="true" id="tbListaEmpresa"
+									value="#{usuarioForm.listaLovEmpresa.listaDeRegistros}"
+									rowKey="#{grupo.id}" paginator="true" rows="10">
+
+									<f:facet name="header">
+									   Empresas permitidas para o usuário
+			        				</f:facet>
+
+									<p:column headerText="Código" width="20%">
+										<h:outputText value="#{grupo.id}" />
+									</p:column>
+
+									<p:column headerText="Empresa" width="80%">
+										<h:outputText value="#{grupo.nomeEmpresa}" />
+									</p:column>
+
+									<p:column style="width:32px; text-align:center">
+
+										<p:commandButton update=":frmPrincipal:tbListaEmpresa"
+											disabled="#{usuarioForm.campoBloqueado}"
+											icon="ui-icon-minusthick" title="Remover">
+											<f:setPropertyActionListener value="#{grupo}"
+												target="#{usuarioForm.listaLovEmpresa.removerDaLista}" />
+										</p:commandButton>
+
+									</p:column>
+
+
+								</p:dataTable>
+
+							</div>
+						</p:fieldset>
+					</div>
+
+
+				</div>
+
+
+			</div>
+		</h:form>
+
+
+		<!-- CONFIRMA EXCLUIR -->
+
+		<p:confirmDialog message="Deseja excluir o registro?" header="Excluir"
+			severity="alert" widgetVar="confirmExcluir">
+
+			<h:form>
+
+				<p:commandButton value="Sim" update=":frmPrincipal"
+					oncomplete="PF('confirmExcluir').hide()"
+					actionListener="#{usuarioForm.iniciarExcluir}" />
+				<p:commandButton value="Não" onclick="PF('confirmExcluir').hide()"
+					type="button" />
+
+			</h:form>
+
+		</p:confirmDialog>
+
+		<!-- MODAL -->
+
+		<p:dialog widgetVar="modalPesquisa" modal="true"
+			header="Pesquisar usuários">
+
+			<h:form id="frmmodalPesquisa">
+
+				<p:dataTable var="grupo" value="#{usuarioForm.todos}"
+					rowKey="#{grupo.id}" paginator="true" rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" selectionMode="single">
+
+					<p:ajax event="rowSelect" listener="#{usuarioForm.onRowSelect}"
+						update=":frmPrincipal" oncomplete="PF('modalPesquisa').hide()" />
+
+					<p:column headerText="Código" filterBy="#{grupo.id}"
+						sortBy="#{grupo.id}">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{grupo.id}" />
+					</p:column>
+					
+					<p:column headerText="Código" filterBy="#{grupo.id}"
+						sortBy="#{grupo.id}">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{grupo.login}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+		<!-- LOV PERFIL -->
+
+		<p:dialog widgetVar="lovPerfil" modal="true" width="500"
+			header="Perfil">
+
+			<h:form id="frmmlovPerfil">
+
+				<p:dataTable var="grupo" value="#{usuarioForm.lovPerfil.registros}"
+					rowKey="#{grupo.id}" paginator="true" rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" selectionMode="single">
+
+					<p:ajax event="rowSelect"
+						listener="#{usuarioForm.lovPerfil.selecionar}"
+						update="frmPrincipal" oncomplete="PF('lovPerfil').hide()" />
+
+					<p:column headerText="Código" filterBy="#{grupo.id}"
+						sortBy="#{grupo.id}">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{grupo.id}" />
+					</p:column>
+
+					<p:column headerText="Nome" filterBy="#{grupo.nome}"
+						sortBy="#{grupo.nome}">
+						<f:facet name="header">
+							<h:outputText value="Nome do perfil" />
+						</f:facet>
+						<h:outputText value="#{grupo.nome}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+		<!-- LISTA LOV EMPRESA -->
+
+		<p:dialog widgetVar="listaLovEmpresa" modal="true" width="500"
+			header="Empresas">
+
+			<h:form id="frmmlistaLovEmpresa">
+
+				<p:dataTable var="grupo"
+					value="#{usuarioForm.listaLovEmpresa.registros}"
+					rowKey="#{grupo.id}" paginator="true" rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" selectionMode="single">
+
+					<p:ajax event="rowSelect"
+						listener="#{usuarioForm.listaLovEmpresa.selecionar}"
+						update="frmPrincipal" oncomplete="PF('listaLovEmpresa').hide()" />
+
+					<p:column headerText="Código" filterBy="#{grupo.id}"
+						sortBy="#{grupo.id}">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{grupo.id}" />
+					</p:column>
+					
+					<p:column headerText="Nome" filterBy="#{grupo.nomeEmpresa}"
+						sortBy="#{grupo.nomeEmpresa}">
+						<f:facet name="header">
+							<h:outputText value="nomeEmpresa" />
+						</f:facet>
+						<h:outputText value="#{grupo.nomeEmpresa}" />
+					</p:column>
+
+
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+		<!-- LOV EMPRESA -->
+
+		<p:dialog widgetVar="lovEmpresa" modal="true" width="500"
+			header="Empresas">
+
+			<h:form id="frmmlovEmpresa">
+
+				<p:dataTable var="grupo" value="#{usuarioForm.lovEmpresa.registros}"
+					rowKey="#{grupo.id}" paginator="true" rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" selectionMode="single">
+
+					<p:ajax event="rowSelect"
+						listener="#{usuarioForm.lovEmpresa.selecionar}"
+						update="frmPrincipal" oncomplete="PF('lovEmpresa').hide()" />
+
+					<p:column headerText="Código" filterBy="#{grupo.id}"
+						sortBy="#{grupo.id}">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{grupo.id}" />
+					</p:column>
+
+					<p:column headerText="Nome" filterBy="#{grupo.nomeEmpresa}"
+						sortBy="#{grupo.nomeEmpresa}">
+						<f:facet name="header">
+							<h:outputText value="nomeEmpresa" />
+						</f:facet>
+						<h:outputText value="#{grupo.nomeEmpresa}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+

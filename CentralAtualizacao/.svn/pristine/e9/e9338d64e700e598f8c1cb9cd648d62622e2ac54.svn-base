@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head></h:head>
+<h:body>
+
+	<h:form id="formulario">
+
+		<p:growl id="growl" life="2000" />
+
+		<div class="container-fluid">
+			<b:row>
+				<b:column span="12">
+					<div class="page-header">
+						<h3>BASE DE CONHECIMENTO</h3>
+					</div>
+				</b:column>
+			</b:row>
+
+			<b:row>
+				<b:column span="12">
+					<div class="input-group">
+						<b:inputText placeholder="Digite o que você deseja buscar"
+							fieldSize="lg" value="#{postagemForm.buscar}" />
+						<div class="input-group-btn">
+							
+							<b:commandButton value="Buscar" ajax="true" update="formulario" actionListener="#{postagemForm.buscarPostagem}" size="lg"/>
+
+						</div>
+						
+					</div>
+					<div class="page-header">
+						<h3>
+							<small>Itens para a visualização no momento</small>
+						</h3>
+					</div>
+				</b:column>
+			</b:row>
+
+
+			<b:row>
+				<b:column span="12">
+
+					<h:dataTable id="tbPostagems" class="table"
+						value="#{postagemForm.postagems}" var="postagem">
+
+						<h:column>
+
+							<f:facet name="header">Conhecimento</f:facet>
+
+
+							<h:link value="#{postagem.tituloPostagem}" outcome="postagem">
+								<f:param name="idpost" value="#{postagem.id}" />
+							</h:link>
+
+						</h:column>
+
+					</h:dataTable>
+
+				</b:column>
+			</b:row>
+
+		</div>
+
+
+	</h:form>
+
+</h:body>
+</html>

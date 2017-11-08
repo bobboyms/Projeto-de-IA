@@ -1,0 +1,309 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<ui:define name="content">
+
+		<div class="ui-grid ui-grid-responsive">
+			<div class="ui-grid-row" style="background-color: #149bdf;">
+
+				<h1 class="aw-page-title" style="margin-left: 30px;">Controle de chamados</h1>
+
+			</div>
+		</div>
+
+		<p:ajaxStatus onstart="PF('statusDialog').show();"
+			onsuccess="PF('statusDialog').hide();" />
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false">
+			<p:graphicImage value="/design/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<h:form id="frmPrincipal" enctype="multipart/form-data">
+
+			<p:growl id="messages" showDetail="true" />
+
+			<p:toolbar id="toolbar" styleClass="ui-widget-toolbar ">
+				<p:toolbarGroup align="left">
+
+					<p:commandButton type="push" value="Novo" icon="ui-icon-document"
+						actionListener="#{chamadoForm.iniciarCadastrar}"
+						rendered="#{chamadoForm.permiteNovo}" update=":frmPrincipal" />
+
+					<p:commandButton type="push" value="Salvar" icon="ui-icon-disk"
+						actionListener="#{chamadoForm.iniciarInserir}"
+						rendered="#{chamadoForm.estadoCadastrando || chamadoForm.estadoEditando}"
+						update=":frmPrincipal ,:frmmodalPesquisa" />
+
+					<p:commandButton type="push" value="Cancelar"
+						actionListener="#{chamadoForm.cancelar}"
+						icon="ui-icon-circle-close"
+						rendered="#{chamadoForm.estadoCadastrando || chamadoForm.estadoEditando}"
+						update=":frmPrincipal" />
+
+					<p:commandButton type="push" value="Editar" icon="ui-icon-pencil"
+						actionListener="#{chamadoForm.iniciarEditar}"
+						rendered="#{chamadoForm.permiteEditar}" update=":frmPrincipal" />
+
+					<p:commandButton type="push" value="voltar" icon="ui-icon-arrowreturnthick-1-w"
+						oncomplete="window.location.href = 'chamados.jsf'" />
+
+					<p:commandButton value="Sair" action="#{autenticacao.logout}" icon="ui-icon-circle-close" />
+
+				</p:toolbarGroup>
+			</p:toolbar>
+			
+			<h:outputLabel value="#{chamadoForm.chamadoExterno}" />
+			
+			<div class="ui-grid ui-grid-responsive">
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-2">
+						<div class="ui-bloco-campo">
+							<h:outputLabel value="Código do chamado" />
+							<p:inputText value="#{chamadoForm.entidade.id}" disabled="true"
+								styleClass="ui-input-100" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="ui-grid ui-grid-responsive">
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-4">
+						<div class="ui-bloco-campo">
+							<h:outputLabel value="Titulo do chamado" />
+							<p:inputText value="#{chamadoForm.entidade.tituloChamado}"
+								id="inputTituloChamado"
+								disabled="#{chamadoForm.campoBloqueado or chamadoForm.estadoEditando}"
+								styleClass="ui-input-100">
+								<f:ajax execute="@this" event="blur" />
+							</p:inputText>
+						</div>
+					</div>
+
+					<div class="ui-grid-col-2">
+						<div class="ui-bloco-campo">
+							<h:outputLabel value="Status da ultima resposta" />
+							<p:inputText
+								value="#{chamadoForm.entidade.indStatusRespostaChamadoFormatado}"
+								disabled="true" styleClass="ui-input-100" />
+						</div>
+					</div>
+
+					
+					<div class="ui-grid-col-2">
+						<div class="ui-bloco-campo">
+							<h:outputLabel value="Status do chamado" />
+							<h:selectOneMenu styleClass="ui-input-100" disabled="#{chamadoForm.campoBloqueado or chamadoForm.estadoCadastrando}"
+								value="#{chamadoForm.entidade.indStatus}" >
+								<f:selectItems value="#{chamadoForm.itemsStatus}" >
+								</f:selectItems>
+							</h:selectOneMenu>
+						</div>
+					</div>
+					
+					<div class="ui-grid-col-2">
+						<h:panelGroup rendered="#{chamadoForm.fechado}">
+						<div class="ui-bloco-campo">
+							<h:outputLabel value="Avaliação" />
+							<h:selectOneMenu styleClass="ui-input-100" disabled="#{chamadoForm.campoBloqueado or chamadoForm.estadoCadastrando}"
+								value="#{chamadoForm.entidade.indAvaliacao}" >
+								<f:selectItems value="#{chamadoForm.itemsAvaliacao}" />
+							</h:selectOneMenu>
+						</div>
+						</h:panelGroup>
+					</div>
+
+
+				</div>
+			</div>
+
+			<p:panel
+				rendered="#{chamadoForm.respondendoChamado || (chamadoForm.estadoCadastrando and !chamadoForm.estadoEditando)}"
+				id="pnMensagem">
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-12">
+							<div class="ui-bloco-campo">
+								<h:outputLabel value="Titulo do chamado" />
+								<p:editor id="editor" widgetVar="editorWidget"
+									value="#{chamadoForm.mensagemDoChamado.mensagem}"
+									disabled="#{chamadoForm.campoBloqueado}"
+									styleClass="ui-input-100">
+								</p:editor>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			</p:panel>
+
+			<p:panel
+				rendered="#{chamadoForm.respondendoChamado || (chamadoForm.estadoCadastrando and !chamadoForm.estadoEditando)}"
+				id="pnAnexo">
+
+				<h2>ANEXAR ARQUIVOS</h2>
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-12">
+							<div class="ui-bloco-campo">
+								<p:fileUpload
+									fileUploadListener="#{chamadoForm.handleFileUpload}"
+									mode="advanced" dragDropSupport="true" update="pnAnexo"
+									allowTypes="/(\.|\/)(gif|jpe?g|png|zip|rar|pdf)$/" />
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ui-grid ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-4">
+							<div class="ui-bloco-campo">
+								<p:dataTable id="anexoDT" var="anexo"
+									value="#{chamadoForm.anexoMensagemDoChamados}">
+									<f:facet name="header">
+            							Anexos Enviados
+        							</f:facet>
+									<p:column headerText="Arquivo">
+										<h:outputText value="#{anexo.nomeArquivo}" />
+									</p:column>
+									<p:column style="width:32px;text-align: center">
+										<p:commandButton update=":frmPrincipal:pnAnexo"
+											icon="ui-icon-minus" title="Excluir">
+											<f:setPropertyActionListener value="#{anexo}"
+												target="#{chamadoForm.selectedAnexo}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</p:panel>
+
+			<p:dataGrid var="mensagem" value="#{chamadoForm.mensagens}"
+				columns="1" style="margin-top: 20px"
+				rendered="#{!chamadoForm.estadoCadastrando}" layout="grid" rows="12"
+				paginator="true" id="mensagems"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="6,12,16">
+
+				<f:facet name="header">
+            		RESPOSTAS
+        		</f:facet>
+
+				<p:panel
+					header="RESPONDIDO POR : #{mensagem.usuarioQueRespondeu.nomeUsuario} EM #{mensagem.dthRespostaFormatado}"
+					style="text-align:center;" menuTitle="teste" styleClass="#{mensagem.respondidoSuporte eq true ? 'respostaEticoSuporte' : mensagem.respondidoSuporte eq false ? 'respostaCliente' : null}">
+					<h:panelGrid columns="1" style="width:100%">
+
+						<p:outputLabel escape="false" value="#{mensagem.mensagem}" />
+
+						<p:commandButton value="Responder"
+							disabled="#{mensagem.respondido or mensagem.mesmoUsuarioCriou}"
+							actionListener="#{chamadoForm.iniciarResponder}"
+							update=":frmPrincipal" />
+
+						<p:commandButton update=":frmdialogAnexo" value="Anexo"
+							icon="ui-icon-search" rendered="#{mensagem.possuiAnexo}"
+							oncomplete="PF('anexosDialog').show()" title="View Detail">
+							<f:setPropertyActionListener value="#{mensagem}"
+								target="#{chamadoForm.selectedMensagemDoChamado}" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:panel>
+
+			</p:dataGrid>
+
+
+		</h:form>
+
+		<!-- ANEXOS SELECIONADOS -->
+
+		<p:dialog header="Anexos" widgetVar="anexosDialog" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="false">
+
+			<h:form id="frmdialogAnexo">
+
+				<p:dataTable var="anexo"
+					value="#{chamadoForm.anexoMensagemDoChamados}">
+
+					<f:facet name="header">
+            		Anexos Enviados
+        		</f:facet>
+
+					<p:column headerText="Arquivo">
+						<h:outputText value="#{anexo.nomeArquivo}" />
+					</p:column>
+					<p:column style="width:32px;text-align: center">
+						<p:button icon="ui-icon-arrowthick-1-s"
+							href="/anexoDownloader?id=#{anexo.id}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+		<!-- CONFIRMA EXCLUIR -->
+
+		<p:confirmDialog message="Deseja excluir o registro?" header="Excluir"
+			severity="alert" widgetVar="confirmExcluir">
+
+			<h:form>
+
+				<p:commandButton value="Sim" update=":frmPrincipal"
+					oncomplete="PF('confirmExcluir').hide()"
+					actionListener="#{chamadoForm.iniciarExcluir}" />
+				<p:commandButton value="Não" onclick="PF('confirmExcluir').hide()"
+					type="button" />
+
+			</h:form>
+
+		</p:confirmDialog>
+
+		<!-- MODAL -->
+
+		<p:dialog widgetVar="modalPesquisa" modal="true"
+			header="Pesquisar convenios">
+
+			<h:form id="frmmodalPesquisa">
+
+				<p:dataTable var="grupo" value="#{chamadoForm.todos}"
+					rowKey="#{grupo.id}" paginator="true" rows="10"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" selectionMode="single">
+
+					<p:ajax event="rowSelect" listener="#{chamadoForm.onRowSelect}"
+						update=":frmPrincipal" oncomplete="PF('modalPesquisa').hide()" />
+
+					<p:column headerText="Código" filterBy="#{grupo.id}"
+						sortBy="#{grupo.id}">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{grupo.id}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+

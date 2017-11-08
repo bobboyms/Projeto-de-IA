@@ -1,0 +1,64 @@
+/* BASE */
+body {
+	margin: 0;
+	font-size: 13px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.ui-bloco-campo {
+	padding-top: 20px; padding-left: 20px;
+}
+
+.amarelo {
+    background-color: #fca752 !important;
+}
+
+.verde {
+    background-color: #B8E460 !important;
+}
+
+.respostaCliente {
+	background-color: #FFE844 !important;
+}
+
+.respostaEticoSuporte {
+	background-color: #8AC8E6 !important;
+}
+
+.ui-input-100 {
+	width: 100%;
+}
+
+@media (max-width: 640px) {
+	.ui-bloco-campo {
+		padding-top: 20px; padding-left: 0px;
+	}
+	
+	.ui-input-100 {
+		
+	}
+}
+
+/* TABVIEW */
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
+	color: #555;
+}
+
+
+
+@media (max-width: 640px) {
+	.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+		width: 100%;
+	}
+}
+
+/* PANELGRID */
+.ui-panelgrid.panelgrid-noborder .ui-grid-responsive {
+	border: none;
+}
+
+@media (max-width: 640px) {
+	.ui-panelgrid.panelgrid-noborder .ui-grid-responsive .ui-grid-row {
+		border: none;
+	}
+}

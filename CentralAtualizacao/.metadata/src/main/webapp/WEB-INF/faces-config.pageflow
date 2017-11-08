@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf14393946834690" configfile="/CentralAtualizacao/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="login.xhtml" id="pf14571925440781" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" outlinks="pf14571925440783 pf14574696777330" inlinks="pf14571925440783 pf14593515403420 pf14616263644420" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="paginas/chamados.xhtml" id="pf14574696777342" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf14616263644420" inlinks="pf14574696777330" path="/paginas/chamados.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="paginas/chamado.xhtml" id="pf14593515403421" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf14593515403420" path="/paginas/chamado.xhtml"/>
+  <links id="pf14571925440783" target="pf14571925440781" source="pf14571925440781" outcome="erro" redirect="true"/>
+  <links id="pf14574696777330" target="pf14574696777342" source="pf14571925440781" outcome="ok" redirect="true"/>
+  <links id="pf14593515403420" target="pf14571925440781" source="pf14593515403421" outcome="ok" redirect="true"/>
+  <links id="pf14616263644420" target="pf14571925440781" source="pf14574696777342" outcome="ok" redirect="true"/>
+</pageflow:Pageflow>

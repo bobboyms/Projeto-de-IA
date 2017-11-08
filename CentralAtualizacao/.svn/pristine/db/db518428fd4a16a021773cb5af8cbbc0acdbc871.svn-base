@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+
+	<style rel="stylesheet" type="text/css">
+input:focus {
+	background-color: yellow;
+}
+</style>
+
+
+</h:head>
+<h:body>
+
+	<h:form id="formulario">
+
+		<p:growl id="growl" life="2000" />
+
+		<div class="container-fluid">
+			<b:row>
+				<b:column span="12">
+					<div class="page-header">
+						<h3>Cadastrar texto</h3>
+					</div>
+				</b:column>
+			</b:row>
+
+			<b:row>
+				<b:column span="12">
+					<div class="input-group">
+						<b:inputText placeholder="Digite o que você deseja cadastrar"
+							fieldSize="lg" value="#{testeIrForm.texto}" disabled="true" />
+						<div class="input-group-btn">
+
+							<b:commandButton value="Cadastrar" ajax="true" rendered="false"
+								update="formulario" actionListener="#{testeIrForm.cadastrar}"
+								size="lg" look="primary" />
+
+						</div>
+
+					</div>
+				</b:column>
+			</b:row>
+
+			<b:row>
+				<b:column span="12">
+					<div class="page-header">
+						<h3>
+							<small><b>Arquivos cadastrados</b></small>
+						</h3>
+					</div>
+
+					<p:dataTable var="postagem"
+						value="#{testeIrForm.postagemDAO.registros}" reflow="true">
+
+						<p:column headerText="Código" style="width: 200px;">
+							<h:outputText value="#{postagem.id}" />
+						</p:column>
+
+						<p:column headerText="Cadastro">
+							<h:outputText value="#{postagem.tituloPostagem}" />
+						</p:column>
+					</p:dataTable>
+
+				</b:column>
+			</b:row>
+
+			<b:row>
+				<b:column span="6">
+
+					<div class="page-header">
+						<h3>
+							<small><b>Indice Reverso</b></small>
+						</h3>
+					</div>
+
+					<p:dataTable var="postagemTermos" filterEvent="enter"
+						value="#{testeIrForm.postagemTermos}" reflow="true">
+						<p:column headerText="Codigo termo">
+							<h:outputText value="#{postagemTermos.id}" />
+						</p:column>
+
+						<p:column headerText="Nome termo" filterBy="#{postagemTermos.termos.termo}">
+							<h:outputText value="#{postagemTermos.termos.termo}" />
+						</p:column>
+
+						<p:column headerText="Qtd Termos">
+							<h:outputText value="#{postagemTermos.qtdTermos}" />
+						</p:column>
+						
+						<p:column headerText="TF">
+							<h:outputText value="#{postagemTermos.frequenciaDoTermoTF}" />
+						</p:column>
+						
+						<p:column headerText="IDF">
+							<h:outputText value="#{postagemTermos.frequenciaDoIndiceReversoTermoIDF}" />
+						</p:column>
+						
+						<p:column headerText="TF-IDF">
+							<h:outputText value="#{postagemTermos.tfIDF}" />
+						</p:column>
+
+						<p:column headerText="Codigo documento">
+							<h:outputText value="#{postagemTermos.postagem.id}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</b:column>
+
+				<b:column span="6">
+
+					<div class="page-header">
+						<h3>
+							<small><b>Tabela de termos</b></small>
+						</h3>
+					</div>
+
+					<p:dataTable var="termos" value="#{testeIrForm.termoDAO.registros}"
+						reflow="true">
+						<p:column headerText="Codigo termo">
+							<h:outputText value="#{termos.id}" />
+						</p:column>
+
+						<p:column headerText="Nome termo" filterBy="#{termos.termo}">
+							<h:outputText value="#{termos.termo}" />
+						</p:column>
+
+						<p:column headerText="Qtd de repetições documentos">
+							<h:outputText value="#{termos.qtdTermoDocumentos}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</b:column>
+
+			</b:row>
+
+		</div>
+
+
+	</h:form>
+
+</h:body>
+</html>
